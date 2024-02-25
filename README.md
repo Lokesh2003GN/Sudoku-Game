@@ -1,5 +1,5 @@
 
-# Sudoku Game with Timer
+# Sudoku Game
 Welcome to the Sudoku Game repository!
 This Python application, built with Tkinter, is a dynamic Sudoku experience with a timer.
 The game generates random Sudoku boards, offers variable difficulty, and tracks your solving time.
