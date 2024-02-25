@@ -67,3 +67,17 @@ def write_num(x,y,n):
 		return True
 	else:
 		return False
+
+def ans_verify(board):
+	valid=True
+	board2=copy.deepcopy(board)
+	for i in range(9):
+		for j in range(9):
+			num=board[i][j]
+			board2[i][j]=0
+			if not ss.valid(i, j, num,board2):
+				valid=False
+				break
+		if not valid:
+			break
+	return valid

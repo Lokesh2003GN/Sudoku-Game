@@ -32,6 +32,8 @@ class SudokuBoard(tk.Tk):
         self.selected_label = None
         self.verify_list = []
         self.events = {}
+        self.error_check=0
+        self.errors=0
         self.myfont = Font(family="times", size=20, weight='bold')
         self.wish = None
 
@@ -51,6 +53,7 @@ class SudokuBoard(tk.Tk):
         if self.wish:
             self.wish.place_forget()
             self.wish_time.place_forget()
+            self.wish_accuracy.place_forget()
 
         # Hiding button
         self.start_button.place_forget()
@@ -95,36 +98,32 @@ class SudokuBoard(tk.Tk):
 
     # verifing values
     def verify_ans(self):
-
-        # if their is no error check for game complection
-        if self.verify_list == []:
-            zeros=True
-            for i in range(9):
-                for j in range(9):
-                    if self.board[i][j] == 0:
-                        zeros=False
-                        break
-            else:
-                if zeros:
-                    self.grid_frame.pack_forget()
-                    self.buttons_frame.pack_forget()
-                    self.stop_timer()
-                    self.time.pack_forget()
-                    self.wish=Label(self,text="congratulations you won",font=("times", 30))
-                    self.wish_time=Label(self,text="you complacted in "+str(self.run_time_min)+" minuts "+str(self.run_time_sec)+" seconds",font=("times",18))
-                    self.wish.place(relx=0.5, rely=0.25, anchor=tk.CENTER)
-                    self.wish_time.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
-                    self.remove_label.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
-                    self.combobox.place(relx=0.5, rely=0.45, anchor=tk.CENTER)
-                    self.start_button.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-        
-        # error finder
-        for num in self.verify_list:
-            x, y = num
-            key = str(x) + str(y)
-            if key in self.events:
-                label = self.events[key]
-                label.configure(bg="red")
+        # if all numbers are followed all rules then render result page
+        self.error_check+=1
+        if sudoku.ans_verify(self.board):
+            self.grid_frame.pack_forget()
+            self.buttons_frame.pack_forget()
+            self.stop_timer()
+            self.time.pack_forget()
+            self.wish=Label(self,text="congratulations you won",font=("times", 30))
+            self.wish_time=Label(self,text="you complacted in "+str(self.run_time_min)+" minuts "+str(self.run_time_sec)+" seconds",font=("times",18))
+            self.wish_accuracy=Label(self,text=str(int((1-((self.errors/self.error_check)/int(self.combobox.get())))*100))+" %"+" accuracy",font=("times",18))
+            self.wish.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
+            self.wish_time.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
+            self.wish_accuracy.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
+            self.remove_label.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+            self.combobox.place(relx=0.5, rely=0.45, anchor=tk.CENTER)
+            self.start_button.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        # if their is any in number 
+        else:
+            # error finder
+            self.errors+=len(self.verify_list)
+            for num in self.verify_list:
+                x, y = num
+                key = str(x) + str(y)
+                if key in self.events:
+                    label = self.events[key]
+                    label.configure(bg="red")
 
     # selecting box to write
     def select(self, event):
